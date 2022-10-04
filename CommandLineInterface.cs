@@ -21,6 +21,7 @@ namespace Cardgame.Blackjack {
                 Game.AddPlayerPos(Double.Parse(command.Split(" ")[1]));
                 Setup();
             } else if (command == "start") {
+                Game.StartGame();
                 Play();
             }
             else {
@@ -29,11 +30,11 @@ namespace Cardgame.Blackjack {
             }
         }
         void Play () {
-            var player = Game.GetCurrentPlayer();
-            if (player == null) {
+            if (Game.GetPhase() != GamePhase.Play) {
                 Finish();
                 return;
             }
+            var player = Game.GetCurrentPlayer();
             PrintGame();
             Console.WriteLine("What does the current player want to do?");
             var command = Console.ReadLine();
@@ -53,7 +54,7 @@ namespace Cardgame.Blackjack {
             }
 
             if (player.IsFinished) {
-                Game.NextPlayer();
+                Game.EndCurrentTurn();
             }
             if (player.IsBust) {
                 var cards = player.Hand.Cards;
@@ -63,7 +64,6 @@ namespace Cardgame.Blackjack {
         }
         void Finish () {
             Console.WriteLine("Everyone has played! Now it is the dealer's turn!");
-            Game.Dealer.Run();
             PrintGame();
             Console.WriteLine();
             Console.WriteLine("Therefore, the final results are:");
