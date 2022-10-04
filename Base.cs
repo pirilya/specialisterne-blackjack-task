@@ -11,8 +11,11 @@ namespace Cardgame.Base {
     }
 
     public struct Card {
+
         public int Value { get; }
         public Suit Suit { get; }
+        static List<string> FormattedValue = new List<string>{"", "Ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King"};
+
         public Card(int value, Suit suit) {
             if (value <= 0 || value > 13) {
                 throw new ArgumentException(String.Format("{0} is not a valid value for a playing card", value));
@@ -21,9 +24,10 @@ namespace Cardgame.Base {
             Suit = suit;
         }
         public override string ToString() {
-            return String.Format("{0} of {1}", Value, Suit);
+            return String.Format("{0} of {1}", FormattedValue[Value], Suit);
         }
     }
+
     public class Hand {
         public List<Card> Cards { get; }
         public Hand () {

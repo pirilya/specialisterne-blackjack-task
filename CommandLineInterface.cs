@@ -41,10 +41,6 @@ namespace Cardgame.Blackjack {
                 return;
             } else if (command == "hit") {
                 player.Hit();
-                if (player.IsFinished) {
-                    var cards = player.Hand.Cards;
-                    Console.WriteLine("You drew a {0} and bust!", cards[cards.Count() - 1]);
-                }
             } else if (command == "stand") {
                 player.Stand();
             } else if (command == "double") {
@@ -59,12 +55,17 @@ namespace Cardgame.Blackjack {
             if (player.IsFinished) {
                 Game.NextPlayer();
             }
+            if (player.IsBust) {
+                var cards = player.Hand.Cards;
+                Console.WriteLine("You drew a {0} and bust!", cards[cards.Count() - 1]);
+            }
             Play();
         }
         void Finish () {
             Console.WriteLine("Everyone has played! Now it is the dealer's turn!");
             Game.Dealer.Run();
             PrintGame();
+            Console.WriteLine();
             Console.WriteLine("Therefore, the final results are:");
             foreach (var p in Game.PlayerPositions) {
                 Console.WriteLine("Player: {0} (won {1})", p.Hand, p.Winnings(Game.Dealer));
