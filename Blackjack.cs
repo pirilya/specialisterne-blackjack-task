@@ -35,6 +35,7 @@ namespace Cardgame.Blackjack {
         public bool IsFinished { get; set; }
         public bool IsBust { get; set; }
         public Base.Shoe Shoe { get; }
+        public bool BlackjackDoesntCount = false;
 
         public BasePosition (Base.Shoe shoe) {
             Shoe = shoe;
@@ -62,7 +63,6 @@ namespace Cardgame.Blackjack {
     public class PlayerPosition : BasePosition {
 
         public double Bet { get; set; }
-        public bool BlackjackDoesntCount = false;
 
         public PlayerPosition (double bet, Base.Shoe shoe) : base (shoe) {
             Bet = bet;
@@ -90,22 +90,22 @@ namespace Cardgame.Blackjack {
                 Bet = 0;
             }
         }
-        void Double () {
+        public void Double () {
             Bet *= 2.0;
             Hit();
             IsFinished = true;
         }
-        bool CanSplit() {
+        public bool CanSplit() {
             return Hand.Count() == 2 && Hand.Cards[0].Value == Hand.Cards[1].Value;
         }
-        (PlayerPosition left, PlayerPosition right) Split () {
+        public (PlayerPosition left, PlayerPosition right) Split () {
             if (!CanSplit()) {
                 throw new InvalidOperationException("Can only split when you have exactly 2 cards which have the same value");
             }
             return (new PlayerPosition (Bet, Shoe, Hand.Cards[0]), new PlayerPosition (Bet, Shoe, Hand.Cards[1]));
 
         }
-        double Winnings (Dealer dealer) {
+        public double Winnings (Dealer dealer) {
             // A blackjack counts as a higher score than a non-blackjack 21, so for this comparison let's count a blackjack as 22
             var dealerScore = dealer.Hand.IsBlackjack() ? 22 : dealer.Hand.Score();
             var myScore = Hand.IsBlackjack() && !BlackjackDoesntCount ? 22 : Hand.Score();
@@ -135,13 +135,24 @@ namespace Cardgame.Blackjack {
         public Base.Shoe Shoe { get; }
         public Dealer Dealer { get; }
         public List<PlayerPosition> PlayerPositions { get; }
+        int CurrentPlayerIndex { get; set; }
         public Game () {
             Shoe = new Base.Shoe(6);
             Dealer = new Dealer(Shoe);
             PlayerPositions = new List<PlayerPosition>();
+            CurrentPlayerIndex = 0;
         }
         public void AddPlayerPos (double bet) {
             PlayerPositions.Add(new PlayerPosition(bet, Shoe));
+        }
+        public PlayerPosition? GetCurrentPlayer () {
+            if (CurrentPlayerIndex < PlayerPositions.Count()) {
+                return PlayerPositions[CurrentPlayerIndex];
+            }
+            return null;
+        }
+        public void NextPlayer () {
+            CurrentPlayerIndex++;
         }
     }
 }
