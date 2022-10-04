@@ -48,6 +48,7 @@ namespace Cardgame.Base {
             for (var i = 0; i < numDecks; i++) {
                 AddDeck();
             }
+            Shuffle();
         }
         public void AddDeck () {
             for (var v = 1; v <= 13; v++) {
