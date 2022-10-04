@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head>
+    <style type="text/css">
+        .hidden {
+            display: none;
+        }
+        .modal-background {
+            background: #0009;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+        .modal-background form {
+            max-width: 50rem;
+            margin: 5rem auto;
+            background: #fff;
+            padding: 1rem;
+        }
+    </style>
+</head><body>
+
+    <div class="modal-background hidden" id="user-creation-modal">
+        <form role="dialog" aria-labelledby="dialog-heading" aria-modal="true">
+            <h2 id="dialog-heading">Please tell us your name and how much money you have.</h2>
+            <label for="user-name">Name</label><input type="text" id="user-name" />
+            <label for="user-money">Money</label><input type="number" id="user-money" />
+            <input type="submit" value="Submit" onclick="alert(8)" />
+        </form>
+    </div>
+
+    <script type="text/javascript" src="script.js"></script>
+
+</body></html>
