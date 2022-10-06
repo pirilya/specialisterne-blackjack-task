@@ -89,7 +89,7 @@ namespace Cardgame.Blackjack {
             Console.WriteLine();
             Console.WriteLine("Therefore, the final results are:");
             foreach (var p in Game.PlayerPositions) {
-                Console.WriteLine("{0} (won {1})", p.Hand, p.Winnings(Game.Dealer));
+                Console.WriteLine("{0} {1} (won {2})", p.Player.Name, p.Hand, p.Winnings(Game.Dealer));
             }
             PrintWorld();
             Console.WriteLine("Do you wish to play another game?");
