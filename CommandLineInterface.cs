@@ -68,8 +68,10 @@ namespace Cardgame.Blackjack {
                 PrintGame();
             } else if (command == "split" && pos.CanSplit()) {
                 pos.Split();
+            } else if (command == "surrender" && pos.CanSurrender()) {
+                pos.Surrender();
             } else {
-                Console.WriteLine("I didn't recognize that command. (Accepted commands at this stage are \"quit\", \"hit\", \"stand\", \"double\", and \"split\" if splitting is possible.)");
+                Console.WriteLine("I didn't recognize that command. (Accepted commands at this stage are \"quit\", \"hit\", \"stand\", \"double\", and \"split\" and \"surrender\" if those are possible.)");
             }
 
             if (pos.IsFinished) {

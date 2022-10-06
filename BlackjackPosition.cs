@@ -82,6 +82,17 @@ namespace Cardgame.Blackjack {
             return (new PlayerPosition (Player, Bet, Shoe, Hand.Cards[0]), new PlayerPosition (Player, Bet, Shoe, Hand.Cards[1]));
 
         }
+        public bool CanSurrender () {
+            return Hand.Count() == 2;
+        }
+        public void Surrender () {
+            if (!CanSurrender()) {
+                throw new InvalidOperationException("Can only surrender on your first turn");
+            }
+            Player.Money += 0.5 * Bet;
+            Bet = 0.0;
+            IsFinished = true;
+        }
         public double Winnings (Dealer dealer) {
             // A blackjack counts as a higher score than a non-blackjack 21, so for this comparison let's count a blackjack as 22
             var dealerScore = dealer.Hand.IsBlackjack() ? 22 : dealer.Hand.Score();
