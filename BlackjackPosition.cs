@@ -37,13 +37,16 @@ namespace Cardgame.Blackjack {
     public class PlayerPosition : BasePosition {
 
         public double Bet { get; set; }
+        public Player Player { get; }
 
-        public PlayerPosition (double bet, Base.Shoe shoe) : base (shoe) {
+        public PlayerPosition (Player player, double bet, Base.Shoe shoe) : base (shoe) {
+            Player = player;
             Bet = bet;
             DrawToTwo();
         }
-        public PlayerPosition (double bet, Base.Shoe shoe, Base.Card card) : base (shoe) { // Constructor for when we're splitting, ie creating a new hand with one already-known card
+        public PlayerPosition (Player player, double bet, Base.Shoe shoe, Base.Card card) : base (shoe) { // Constructor for when we're splitting, ie creating a new hand with one already-known card
             Hand.Add(card);
+            Player = player;
             Bet = bet;
             DrawToTwo();
             if (card.Value == 1) {
@@ -76,7 +79,7 @@ namespace Cardgame.Blackjack {
             if (!CanSplit()) {
                 throw new InvalidOperationException("Can only split when you have exactly 2 cards which have the same value");
             }
-            return (new PlayerPosition (Bet, Shoe, Hand.Cards[0]), new PlayerPosition (Bet, Shoe, Hand.Cards[1]));
+            return (new PlayerPosition (Player, Bet, Shoe, Hand.Cards[0]), new PlayerPosition (Player, Bet, Shoe, Hand.Cards[1]));
 
         }
         public double Winnings (Dealer dealer) {

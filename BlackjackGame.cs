@@ -21,11 +21,12 @@ namespace Cardgame.Blackjack {
             Phase = GamePhase.Setup;
             CurrentPlayerIndex = 0;
         }
-        public void AddPlayerPos (double bet) {
+        public void AddPlayerPos (Player player, double bet) {
             if (Phase != GamePhase.Setup) {
                 throw new InvalidOperationException("Can only add players during the setup phase");
             }
-            PlayerPositions.Add(new PlayerPosition(bet, Shoe));
+            player.Money -= bet;
+            PlayerPositions.Add(new PlayerPosition(player, bet, Shoe));
         }
         public GamePhase GetPhase () {
             return Phase;
@@ -34,7 +35,7 @@ namespace Cardgame.Blackjack {
             Phase = GamePhase.Play;
             CurrentPlayerIndex = 0;
         }
-        public PlayerPosition? GetCurrentPlayer () {
+        public PlayerPosition? GetCurrentPosition () {
             if (Phase == GamePhase.Play) {
                 return PlayerPositions[CurrentPlayerIndex];
             }
@@ -48,6 +49,9 @@ namespace Cardgame.Blackjack {
             if (CurrentPlayerIndex >= PlayerPositions.Count()) {
                 Phase = GamePhase.Ended;
                 Dealer.Run();
+                foreach (var p in PlayerPositions) {
+                    p.Player.Money += p.Winnings(Dealer);
+                }
             }
         }
     }

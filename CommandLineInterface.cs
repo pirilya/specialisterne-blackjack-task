@@ -3,30 +3,49 @@ using System.Linq;
 
 namespace Cardgame.Blackjack {
     public class CommandLineInterface {
-        Game Game { get; }
+        World World { get; }
+        // this interface is simple: we only have one player playing in one game
+        // so might as well have those as accessible variables
+        Game Game { get; set; }
+        Player Player { get; set; }
         public CommandLineInterface () {
-            Game = new Game();
+            World = new World();
             Console.WriteLine("Welcome to Blackjack!");
         }
         public void Run () {
-            Setup();
+            WorldSetup();
         }
-        void Setup () {
+        void WorldSetup () {
+            Console.WriteLine("What's your name?");
+            var playerName = Console.ReadLine();
+            Console.WriteLine("How much money do you have?");
+            var success = false;
+            double playerMoney = 0.0;
+            while (!success) {
+                Console.WriteLine("Please write a number.");
+                success = Double.TryParse(Console.ReadLine(), out playerMoney);
+            }
+            Player = World.AddPlayer(playerName, playerMoney);
+            Game = World.AddGame("cli-game");
+            PrintWorld();
+            GameSetup();
+        }
+        void GameSetup () {
             Console.WriteLine("Your game has {0} player positions.", Game.PlayerPositions.Count());
             Console.WriteLine("What do you want to do?");
             var command = Console.ReadLine();
             if (command == "quit") {
                 // do nothing
-            } else if (command.StartsWith("add") && command.Contains(" ")) {
-                Game.AddPlayerPos(Double.Parse(command.Split(" ")[1]));
-                Setup();
+            } else if (command.StartsWith("bet") && command.Contains(" ")) {
+                Game.AddPlayerPos(Player, Double.Parse(command.Split(" ")[1]));
+                GameSetup();
             } else if (command == "start") {
                 Game.StartGame();
                 Play();
             }
             else {
-                Console.WriteLine("I didn't understand that. (Accepted commands at this stage are \"quit\", \"add {bet size}\", and \"start\".)");
-                Setup();
+                Console.WriteLine("I didn't understand that. (Accepted commands at this stage are \"quit\", \"bet {bet size}\", and \"start\".)");
+                GameSetup();
             }
         }
         void Play () {
@@ -34,30 +53,30 @@ namespace Cardgame.Blackjack {
                 Finish();
                 return;
             }
-            var player = Game.GetCurrentPlayer();
+            var pos = Game.GetCurrentPosition();
             PrintGame();
-            Console.WriteLine("What does the current player want to do?");
+            Console.WriteLine("What does the current player position want to do?");
             var command = Console.ReadLine();
             if (command == "quit") {
                 return;
             } else if (command == "hit") {
-                player.Hit();
+                pos.Hit();
             } else if (command == "stand") {
-                player.Stand();
+                pos.Stand();
             } else if (command == "double") {
-                player.Double();
+                pos.Double();
                 PrintGame();
-            } else if (command == "split" && player.CanSplit()) {
-                player.Split();
+            } else if (command == "split" && pos.CanSplit()) {
+                pos.Split();
             } else {
                 Console.WriteLine("I didn't recognize that command. (Accepted commands at this stage are \"quit\", \"hit\", \"stand\", \"double\", and \"split\" if splitting is possible.)");
             }
 
-            if (player.IsFinished) {
+            if (pos.IsFinished) {
                 Game.EndCurrentTurn();
             }
-            if (player.IsBust) {
-                var cards = player.Hand.Cards;
+            if (pos.IsBust) {
+                var cards = pos.Hand.Cards;
                 Console.WriteLine("You drew a {0} and bust!", cards[cards.Count() - 1]);
             }
             Play();
@@ -68,8 +87,32 @@ namespace Cardgame.Blackjack {
             Console.WriteLine();
             Console.WriteLine("Therefore, the final results are:");
             foreach (var p in Game.PlayerPositions) {
-                Console.WriteLine("Player: {0} (won {1})", p.Hand, p.Winnings(Game.Dealer));
+                Console.WriteLine("{0} (won {1})", p.Hand, p.Winnings(Game.Dealer));
             }
+            PrintWorld();
+            Console.WriteLine("Do you wish to play another game?");
+            if (YesNo()) {
+                GameSetup();
+            } else {
+                Console.WriteLine("Understandable! Have a nice day!");
+            }
+        }
+        bool YesNo() {
+            var answer = Console.ReadLine();
+            if (answer.Length > 0){
+                var c = Char.ToLower(answer[0]);
+                if (c == 'y') {
+                    return true;
+                } else if (c == 'n') {
+                    return false;
+                }
+            }
+            Console.WriteLine("Please answer yes or no.");
+            return YesNo();
+        }
+        void PrintWorld () {
+            Console.WriteLine("The state of everyone's financials is:");
+            Console.WriteLine("{0}: {1}", Player.Name, Player.Money);
         }
         static string FormattedScore(BasePosition pos) {
             if (pos.IsBust) {
@@ -83,8 +126,11 @@ namespace Cardgame.Blackjack {
         void PrintGame () {
             Console.WriteLine("Dealer: {0} ({1})", Game.Dealer.Hand, FormattedScore(Game.Dealer));
             foreach (var p in Game.PlayerPositions) {
-                var descriptor = p == Game.GetCurrentPlayer() ? "Current player" : "Player";
-                Console.WriteLine("{0}: {1} ({2}, bet {3})", descriptor, p.Hand, FormattedScore(p), p.Bet);
+                string beginning = "";
+                if (p == Game.GetCurrentPosition()) {
+                    beginning = "Currently playing: ";
+                }
+                Console.WriteLine("{0}{1} {2} ({3}, bet {4})", beginning, p.Player.Name, p.Hand, FormattedScore(p), p.Bet);
             }
         }
     }

@@ -6,9 +6,9 @@ namespace Cardgame.Blackjack {
         static async Task Main(string[] args)
         {
             var CLI = new CommandLineInterface();
-            //CLI.Run();
-            var Server = new APIServer(8000);
-            await Server.Listen();
+            CLI.Run();
+            //var Server = new APIServer(8000);
+            //await Server.Listen();
         }
     }
 }
