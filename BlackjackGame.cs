@@ -35,11 +35,11 @@ namespace Cardgame.Blackjack {
             Phase = GamePhase.Play;
             CurrentPlayerIndex = 0;
         }
-        public PlayerPosition? GetCurrentPosition () {
-            if (Phase == GamePhase.Play) {
-                return PlayerPositions[CurrentPlayerIndex];
+        public PlayerPosition GetCurrentPosition () {
+            if (Phase != GamePhase.Play) {
+                throw new InvalidOperationException("Can only get the current position during the play phase");
             }
-            return null;
+            return PlayerPositions[CurrentPlayerIndex];
         }
         public void EndCurrentTurn () {
             if (Phase != GamePhase.Play) {

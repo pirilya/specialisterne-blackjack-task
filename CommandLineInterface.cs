@@ -129,7 +129,7 @@ namespace Cardgame.Blackjack {
             Console.WriteLine("Dealer: {0} ({1})", Game.Dealer.Hand, FormattedScore(Game.Dealer));
             foreach (var p in Game.PlayerPositions) {
                 string beginning = "";
-                if (p == Game.GetCurrentPosition()) {
+                if (Game.GetPhase() == GamePhase.Play && p == Game.GetCurrentPosition()) {
                     beginning = "Currently playing: ";
                 }
                 Console.WriteLine("{0}{1} {2} ({3}, bet {4})", beginning, p.Player.Name, p.Hand, FormattedScore(p), p.Bet);
