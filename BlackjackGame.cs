@@ -9,7 +9,7 @@ namespace Cardgame.Blackjack {
         Ended
     }
     public class Game {
-        public Base.Shoe Shoe { get; }
+        Base.Shoe Shoe { get; }
         public Dealer Dealer { get; }
         public List<PlayerPosition> PlayerPositions { get; }
         int CurrentPlayerIndex { get; set; }

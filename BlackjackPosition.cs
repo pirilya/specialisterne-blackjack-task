@@ -8,7 +8,7 @@ namespace Cardgame.Blackjack {
         public Hand Hand { get; }
         public bool IsFinished { get; set; }
         public bool IsBust { get; set; }
-        public Base.Shoe Shoe { get; }
+        Base.Shoe Shoe { get; }
         public bool BlackjackDoesntCount = false;
 
         public BasePosition (Base.Shoe shoe) {
@@ -16,6 +16,9 @@ namespace Cardgame.Blackjack {
             Hand = new Hand();
             IsFinished = false;
             IsBust = false;
+        }
+        public Base.Shoe GetShoe() {
+            return Shoe;
         }
         public void Draw () {
             Hand.Add(Shoe.Draw());
@@ -79,7 +82,7 @@ namespace Cardgame.Blackjack {
             if (!CanSplit()) {
                 throw new InvalidOperationException("Can only split when you have exactly 2 cards which have the same value");
             }
-            return (new PlayerPosition (Player, Bet, Shoe, Hand.Cards[0]), new PlayerPosition (Player, Bet, Shoe, Hand.Cards[1]));
+            return (new PlayerPosition (Player, Bet, GetShoe(), Hand.Cards[0]), new PlayerPosition (Player, Bet, GetShoe(), Hand.Cards[1]));
 
         }
         public bool CanSurrender () {
