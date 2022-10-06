@@ -27,7 +27,7 @@ namespace Cardgame.Blackjack {
             }
             return JsonSerializer.SerializeToUtf8Bytes(result);
         }
-        void DebugPrint(HttpListenerRequest request) {
+        void DebugPrint(HttpListenerRequest request) { // delete this function before publishing
             Console.WriteLine("request! at url path {0}, with query {1}, headers:\n{2}", 
             request.Url.AbsolutePath, request.Url.Query, request.Headers);
             string text;
@@ -44,7 +44,7 @@ namespace Cardgame.Blackjack {
                 var urlParams = context.Request.Url.Query.Substring(1).Split("&")
                                     .Select(x => x.Split("=", 2))
                                     .ToDictionary(keySelector: x => x[0], elementSelector: x => x[1]);
-                } else if (context.Request.Url.AbsolutePath == "/api/getdata") {
+                if (context.Request.Url.AbsolutePath == "/api/getdata") {
                     var jsonData = new byte[] {};
                     if (urlParams["type"] == "player") {
                         jsonData = GetData(urlParams["id"], World.GetPlayer);
